@@ -10,7 +10,14 @@ namespace FlexColParser
     public partial class Form1 : Form
     {
         private string objFileName;
-        
+        private List<MaterialInfo> materialsList;
+
+        public class MaterialInfo
+        {
+            public string OriginalName { get; set; }
+            public Material Material { get; set; }
+        }
+
         public class MaterialNameConverter : TypeConverter
         {
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
@@ -33,9 +40,28 @@ namespace FlexColParser
             }
         }
 
+        public class FxPresetConverter : TypeConverter
+        {
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+            {
+                return true;
+            }
+
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                return new StandardValuesCollection(new[] { null,"Fence", "Water" });
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
+            materialsList = new List<MaterialInfo>();
         }
 
         private void createJSONToolStripMenuItem_Click(object sender, EventArgs e)
@@ -50,9 +76,9 @@ namespace FlexColParser
             JObject materials = new JObject();
 
             // Aquí obtenemos los nombres de materiales del ListBox y los agregamos al JSON
-            foreach (string materialName in listBox1.Items)
+            foreach (MaterialInfo materialInfo in materialsList)
             {
-                materials.Add(materialName, CreateMaterial(materialName));
+                materials.Add(materialInfo.OriginalName, CreateMaterial(materialInfo.Material.MatName, materialInfo.Material.MatFlags, materialInfo.Material.FxPreset, materialInfo.Material.ColDisableFlag));
             }
             string userText = textBoxObjectName.Text;
             string userText2 = textBox69.Text;
@@ -92,11 +118,11 @@ namespace FlexColParser
             JObject material = new JObject();
             if (matName != null)
                 material.Add("mat_name", matName);
-            if (matFlags != null)
+            if (matFlags != null && matFlags.Count > 0) // Agregar mat_flags solo si hay elementos en la lista
                 material.Add("mat_flags", JToken.FromObject(matFlags));
             if (fxPreset != null)
                 material.Add("fx_preset", fxPreset);
-            if (colDisableFlag != null)
+            if (colDisableFlag != null && colDisableFlag.Count > 0) // Agregar col_disable_flag solo si hay elementos en la lista
                 material.Add("col_disable_flag", JToken.FromObject(colDisableFlag));
 
             return material;
@@ -115,9 +141,11 @@ namespace FlexColParser
                 List<string> materialNames = GetMaterialNamesFromObj(objFilePath);
 
                 listBox1.Items.Clear();
+                materialsList.Clear();
                 foreach (string materialName in materialNames)
                 {
                     listBox1.Items.Add(materialName);
+                    materialsList.Add(new MaterialInfo { OriginalName = materialName, Material = new Material { MatName = materialName } });
                 }
             }
         }
@@ -158,9 +186,14 @@ namespace FlexColParser
             if (listBox1.SelectedIndex != -1)
             {
                 // Mostrar las propiedades del material seleccionado en el PropertyGrid
-                string materialName = listBox1.SelectedItem.ToString();
-                propertyGrid1.SelectedObject = new Material { MatName = materialName };
+                MaterialInfo materialInfo = materialsList[listBox1.SelectedIndex];
+                propertyGrid1.SelectedObject = materialInfo.Material;
             }
+        }
+
+        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            propertyGrid1.Refresh();
         }
 
         private void propertyGrid1_Click(object sender, EventArgs e)
@@ -175,7 +208,10 @@ namespace FlexColParser
         public string MatName { get; set; }
 
         public List<string> MatFlags { get; set; }
+
+        [TypeConverter(typeof(Form1.FxPresetConverter))]
         public string FxPreset { get; set; }
+
         public List<string> ColDisableFlag { get; set; }
 
         public Material()
@@ -183,5 +219,6 @@ namespace FlexColParser
             MatFlags = new List<string>();
             ColDisableFlag = new List<string>();
         }
+
     }
 }
