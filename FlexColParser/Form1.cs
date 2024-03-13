@@ -246,13 +246,23 @@ namespace FlexColParser
                         JObject materialInfo = materialData.Value as JObject;
                         string matName = materialInfo?["mat_name"]?.ToString();
                         string fxPreset = materialInfo?["fx_preset"]?.ToString();
-                        
+
                         // Obtener el contenido de mat_flags y col_disable_flag
-                        List<string> matFlags = materialInfo?["mat_flags"]?.ToObject<List<string>>() ?? new List<string>();
-                        List<string> colDisableFlag = materialInfo?["col_disable_flag"]?.ToObject<List<string>>() ?? new List<string>();
+                        List<string> matFlags =
+                            materialInfo?["mat_flags"]?.ToObject<List<string>>() ?? new List<string>();
+                        List<string> colDisableFlag = materialInfo?["col_disable_flag"]?.ToObject<List<string>>() ??
+                                                      new List<string>();
 
                         // Agregar los nuevos elementos a la lista y al listBox
-                        materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset, MatFlags = matFlags, ColDisableFlag = colDisableFlag } });
+                        materialsList.Add(new MaterialInfo
+                        {
+                            OriginalName = originalName,
+                            Material = new Material
+                            {
+                                MatName = matName, FxPreset = fxPreset, MatFlags = matFlags,
+                                ColDisableFlag = colDisableFlag
+                            }
+                        });
                         listBox1.Items.Add(originalName);
                     }
                 }
@@ -272,26 +282,78 @@ namespace FlexColParser
                         checkBoxExtendColHeap.Checked = extendColHeap;
                     }
                 }
+
                 textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
             }
         }
+        
+        
 
         //me quiero matar
         public class Material
         {
+            
+            private List<string> _matFlags;
+            private List<string> _ColDisableFlag;
+            
+            [Category("General")]
             [TypeConverter(typeof(Form1.MaterialNameConverter))]
             public string MatName { get; set; }
 
+            [Category("Advanced")]
             [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
                     "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-            public List<string> MatFlags { get; set; }
+            public List<string> MatFlags 
+            {
+                get { return _matFlags; }
+                set
+                {
+                    _matFlags = value;
+                    DeathZones = _matFlags != null && _matFlags.Contains("PlayerDead");
+                }
+            }
 
+            [Category("Advanced")]
             [TypeConverter(typeof(Form1.FxPresetConverter))]
             public string FxPreset { get; set; }
 
+            [Category("Advanced")]
             [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
                     "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-            public List<string> ColDisableFlag { get; set; }
+            public List<string> ColDisableFlag 
+            {
+                get { return _ColDisableFlag; }
+                set
+                {
+                    _ColDisableFlag = value;
+                    //placeholder
+                    DeathZones = _ColDisableFlag != null && _ColDisableFlag.Contains("PlayerDead");
+                }
+            }
+            
+            [Category("General")]
+            [DisplayName("Death Zones")]
+            [Browsable(true)]
+            public bool DeathZones
+            {
+                get { return _matFlags != null && _matFlags.Contains("PlayerDead"); }
+                set
+                {
+                    if (value)
+                    {
+                        // Agregar "PlayerDead" si no está presente
+                        if (_matFlags == null)
+                            _matFlags = new List<string>();
+                        if (!_matFlags.Contains("PlayerDead"))
+                            _matFlags.Add("PlayerDead");
+                    }
+                    else
+                    {
+                        // Eliminar "PlayerDead" si está presente
+                        _matFlags?.Remove("PlayerDead");
+                    }
+                }
+            }
 
             public Material()
             {
@@ -299,5 +361,6 @@ namespace FlexColParser
                 ColDisableFlag = new List<string>();
             }
         }
+
     }
 }
