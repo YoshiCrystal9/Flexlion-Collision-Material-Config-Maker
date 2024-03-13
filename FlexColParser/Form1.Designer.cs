@@ -31,6 +31,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.openbutton = new System.Windows.Forms.ToolStripButton();
             this.mecagoendios = new System.Windows.Forms.ToolStripButton();
             this.openJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -40,8 +41,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBox69 = new System.Windows.Forms.TextBox();
             this.textBoxObjectName = new System.Windows.Forms.TextBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
-            this.openbutton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -51,9 +50,20 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openbutton, this.mecagoendios });
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(800, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(799, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // openbutton
+            // 
+            this.openbutton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.openbutton.Image = ((System.Drawing.Image)(resources.GetObject("openbutton.Image")));
+            this.openbutton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openbutton.Name = "openbutton";
+            this.openbutton.Size = new System.Drawing.Size(40, 22);
+            this.openbutton.Text = "Open";
+            this.openbutton.ToolTipText = "FileSelect";
+            this.openbutton.Click += new System.EventHandler(this.openbutton_Click);
             // 
             // mecagoendios
             // 
@@ -133,39 +143,22 @@
             this.textBoxObjectName.TabIndex = 0;
             this.textBoxObjectName.Text = "Fld_Something";
             // 
-            // listBox2
-            // 
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(800, 195);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(120, 95);
-            this.listBox2.TabIndex = 10;
-            // 
-            // openbutton
-            // 
-            this.openbutton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.openbutton.Image = ((System.Drawing.Image)(resources.GetObject("openbutton.Image")));
-            this.openbutton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.openbutton.Name = "openbutton";
-            this.openbutton.Size = new System.Drawing.Size(40, 22);
-            this.openbutton.Text = "Open";
-            this.openbutton.ToolTipText = "FileSelect";
-            this.openbutton.Click += new System.EventHandler(this.openbutton_Click);
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.listBox2);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.ClientSize = new System.Drawing.Size(799, 448);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.checkBoxExtendColHeap);
             this.Controls.Add(this.propertyGrid1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.toolStrip1);
+            this.MaximizeBox = false;
             this.Name = "Form1";
+            this.ShowIcon = false;
             this.Text = "Flexlion Collision Helper";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -175,8 +168,6 @@
         }
 
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-
-        private System.Windows.Forms.ListBox listBox2;
 
         private System.Windows.Forms.TextBox textBox69;
 

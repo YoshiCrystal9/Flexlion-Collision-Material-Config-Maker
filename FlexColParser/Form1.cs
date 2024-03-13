@@ -294,12 +294,15 @@ namespace FlexColParser
         {
             
             private List<string> _matFlags;
+            private List<string> _ColDisableFlag;
             
-            [Category("General")]
+            [Category("Attributes")]
+            [DisplayName("Material Name")]
+            [Description("This will change the sounds of the player's footsteps.")]
             [TypeConverter(typeof(Form1.MaterialNameConverter))]
             public string MatName { get; set; }
 
-            [Category("Advanced")]
+            [Category("Attributes")]
             [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
                     "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
             public List<string> MatFlags 
@@ -308,41 +311,917 @@ namespace FlexColParser
                 set
                 {
                     _matFlags = value;
-                    DeathZones = _matFlags != null && _matFlags.Contains("PlayerDead");
+                    UpdateFlagsProperties();
+                }
+            }
+            
+            private void UpdateFlagValue(string flag, bool value)
+            {
+                if (value)
+                {
+                    // Agregar la string si no está presente
+                    if (_matFlags == null)
+                        _matFlags = new List<string>();
+                    if (!_matFlags.Contains(flag))
+                        _matFlags.Add(flag);
+                }
+                else
+                {
+                    // Eliminar la string si está presente
+                    _matFlags?.Remove(flag);
+                }
+            }
+            
+            private void UpdateColFlagValue(string colflag, bool value)
+            {
+                if (value)
+                {
+                    // Agregar la string si no está presente
+                    if (_ColDisableFlag == null)
+                        _ColDisableFlag = new List<string>();
+                    if (!_ColDisableFlag.Contains(colflag))
+                        _ColDisableFlag.Add(colflag);
+                }
+                else
+                {
+                    // Eliminar la string si está presente
+                    _ColDisableFlag?.Remove(colflag);
+                }
+            }
+            
+            private void UpdateFlagsProperties()
+            {
+                // Actualizar cada propiedad booleana según el contenido de MatFlags
+                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
+                {
+                    if (prop.Category == "MatFlag Properties" && prop.PropertyType == typeof(bool))
+                    {
+                        var flagName = prop.Name.Substring(2); // Eliminar "Is" del nombre de la propiedad
+                        prop.SetValue(this, _matFlags != null && _matFlags.Contains(flagName));
+                    }
+                }
+            }
+            
+            private void UpdateColFlagsProperties()
+            {
+                // Actualizar cada propiedad booleana según el contenido de ColDisableFlag
+                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
+                {
+                    if (prop.Category == "ColDisableFlag Properties" && prop.PropertyType == typeof(bool))
+                    {
+                        var colflagName = prop.Name.Substring(2); // Eliminar "Is" del nombre de la propiedad
+                        prop.SetValue(this, _ColDisableFlag != null && _ColDisableFlag.Contains(colflagName));
+                    }
                 }
             }
 
-            [Category("Advanced")]
+            [Category("Attributes")]
             [TypeConverter(typeof(Form1.FxPresetConverter))]
             public string FxPreset { get; set; }
 
-            [Category("Advanced")]
+            [Category("Attributes")]
             [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
                     "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-            public List<string> ColDisableFlag { get; set; }
-            
-            [Category("General")]
-            [DisplayName("Death Zones")]
-            [Browsable(true)]
-            public bool DeathZones{
-                get { return _matFlags != null && _matFlags.Contains("PlayerDead"); }
+            public List<string> ColDisableFlag
+            {
+                get { return _ColDisableFlag; }
                 set
                 {
-                    if (value)
-                    {
-                        // Agregar "PlayerDead" si no está presente
-                        if (_matFlags == null)
-                            _matFlags = new List<string>();
-                        if (!_matFlags.Contains("PlayerDead"))
-                            _matFlags.Add("PlayerDead");
-                    }
-                    else
-                    {
-                        // Eliminar "PlayerDead" si está presente
-                        _matFlags?.Remove("PlayerDead");
-                    }
+                    _ColDisableFlag = value;
+                    UpdateColFlagsProperties();
                 }
             }
+            
+            [Category("MatFlag Properties")]
+            public bool IsWater
+            {
+                get { return _matFlags != null && _matFlags.Contains("Water"); }
+                set { UpdateFlagValue("Water", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsUnridable
+            { 
+                get { return _matFlags != null && _matFlags.Contains("Unridable"); }
+                set { UpdateFlagValue("Unridable", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsBombBlast
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BombBlast"); }
+                set { UpdateFlagValue("BombBlast", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsBombDead
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BombDead"); }
+                set { UpdateFlagValue("BombDead", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsBombCantBind
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BombCantBind"); }
+                set { UpdateFlagValue("BombCantBind", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsBombDamage
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BombDamage"); }
+                set { UpdateFlagValue("BombDamage", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsBombFizzyDirectDamage
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BombFizzyDirectDamage"); }
+                set { UpdateFlagValue("BombFizzyDirectDamage", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsUltraStampBlast
+            { 
+                get { return _matFlags != null && _matFlags.Contains("UltraStampBlast"); }
+                set { UpdateFlagValue("UltraStampBlast", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsUltraStampDead
+            { 
+                get { return _matFlags != null && _matFlags.Contains("UltraStampDead"); }
+                set { UpdateFlagValue("UltraStampDead", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsTripleTornadoDeviceBlast
+            { 
+                get { return _matFlags != null && _matFlags.Contains("TripleTornadoDeviceBlast"); }
+                set { UpdateFlagValue("TripleTornadoDeviceBlast", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsTripleTornadoDeviceDead
+            { 
+                get { return _matFlags != null && _matFlags.Contains("TripleTornadoDeviceDead"); }
+                set { UpdateFlagValue("TripleTornadoDeviceDead", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsTripleTornadoDeviceCantBind
+            { 
+                get { return _matFlags != null && _matFlags.Contains("TripleTornadoDeviceCantBind"); }
+                set { UpdateFlagValue("TripleTornadoDeviceCantBind", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsWashtubBlast
+            { 
+                get { return _matFlags != null && _matFlags.Contains("WashtubBlast"); }
+                set { UpdateFlagValue("WashtubBlast", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsNiceBallBombBlast
+            { 
+                get { return _matFlags != null && _matFlags.Contains("NiceBallBombBlast"); }
+                set { UpdateFlagValue("NiceBallBombBlast", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsPlaceWithMarginWeapon
+            { 
+                get { return _matFlags != null && _matFlags.Contains("PlaceWithMarginWeapon"); }
+                set { UpdateFlagValue("PlaceWithMarginWeapon", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsBulletCantMount
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BulletCantMount"); }
+                set { UpdateFlagValue("BulletCantMount", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsSuperHookCantBind
+            { 
+                get { return _matFlags != null && _matFlags.Contains("SuperHookCantBind"); }
+                set { UpdateFlagValue("SuperHookCantBind", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsActivateWallaObj
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ActivateWallaObj"); }
+                set { UpdateFlagValue("ActivateWallaObj", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsDontRejectOverlapWallaObj
+            { 
+                get { return _matFlags != null && _matFlags.Contains("DontRejectOverlapWallaObj"); }
+                set { UpdateFlagValue("DontRejectOverlapWallaObj", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsGameUnridable
+            { 
+                get { return _matFlags != null && _matFlags.Contains("GameUnridable"); }
+                set { UpdateFlagValue("GameUnridable", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsSquidGuard
+            { 
+                get { return _matFlags != null && _matFlags.Contains("SquidGuard"); }
+                set { UpdateFlagValue("SquidGuard", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsSlide
+            { 
+                get { return _matFlags != null && _matFlags.Contains("Slide"); }
+                set { UpdateFlagValue("Slide", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsPlayerDead
+            { 
+                get { return _matFlags != null && _matFlags.Contains("PlayerDead"); }
+                set { UpdateFlagValue("PlayerDead", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsPlayerUnsafe
+            { 
+                get { return _matFlags != null && _matFlags.Contains("PlayerUnsafe"); }
+                set { UpdateFlagValue("PlayerUnsafe", value); }
+            }
+            [Category("MatFlag Properties")]
+            public bool IsIgnoreBackFace
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoreBackFace"); }
+                set { UpdateFlagValue("IgnoreBackFace", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIgnoreDefiladeBackFace
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoreDefiladeBackFace"); }
+                set { UpdateFlagValue("IgnoreDefiladeBackFace", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsFence
+            { 
+                get { return _matFlags != null && _matFlags.Contains("Fence"); }
+                set { UpdateFlagValue("Fence", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIce
+            { 
+                get { return _matFlags != null && _matFlags.Contains("Ice"); }
+                set { UpdateFlagValue("Ice", value); }
+            }
+            
+            [Category("MatFlag Properties")]
+            public bool IsKeepOut
+            { 
+                get { return _matFlags != null && _matFlags.Contains("KeepOut"); }
+                set { UpdateFlagValue("KeepOut", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsFillUp
+            { 
+                get { return _matFlags != null && _matFlags.Contains("FillUp"); }
+                set { UpdateFlagValue("FillUp", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsKebaInkCore
+            { 
+                get { return _matFlags != null && _matFlags.Contains("KebaInkCore"); }
+                set { UpdateFlagValue("KebaInkCore", value); }
+            }
+            
+            [Category("MatFlag Properties")]
+            public bool IsKebaInk
+            { 
+                get { return _matFlags != null && _matFlags.Contains("KebaInk"); }
+                set { UpdateFlagValue("KebaInk", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsSponge
+            { 
+                get { return _matFlags != null && _matFlags.Contains("Sponge"); }
+                set { UpdateFlagValue("Sponge", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsCurb
+            { 
+                get { return _matFlags != null && _matFlags.Contains("Curb"); }
+                set { UpdateFlagValue("Curb", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsDisableSurfaceVelocity
+            { 
+                get { return _matFlags != null && _matFlags.Contains("DisableSurfaceVelocity"); }
+                set { UpdateFlagValue("DisableSurfaceVelocity", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsNoEffectHitBlower
+            { 
+                get { return _matFlags != null && _matFlags.Contains("NoEffectHitBlower"); }
+                set { UpdateFlagValue("NoEffectHitBlower", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsCancelIgnoreBackFace
+            { 
+                get { return _matFlags != null && _matFlags.Contains("CancelIgnoreBackFace"); }
+                set { UpdateFlagValue("CancelIgnoreBackFace", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIgnoreGreatBarrierDroneAscend
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoreGreatBarrierDroneAscend"); }
+                set { UpdateFlagValue("IgnoreGreatBarrierDroneAscend", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsCanopyKnockBackOwner
+            { 
+                get { return _matFlags != null && _matFlags.Contains("CanopyKnockBackOwner"); }
+                set { UpdateFlagValue("CanopyKnockBackOwner", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsChargerGuide
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ChargerGuide"); }
+                set { UpdateFlagValue("ChargerGuide", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Metal
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Metal"); }
+                set { UpdateFlagValue("LockerMaterial_Metal", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Wood
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Wood"); }
+                set { UpdateFlagValue("LockerMaterial_Wood", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Plastic
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Plastic"); }
+                set { UpdateFlagValue("LockerMaterial_Plastic", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Glass
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Glass"); }
+                set { UpdateFlagValue("LockerMaterial_Glass", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Asplalt
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Asplalt"); }
+                set { UpdateFlagValue("LockerMaterial_Asplalt", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Cloth
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Cloth"); }
+                set { UpdateFlagValue("LockerMaterial_Cloth", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsLockerMaterial_Rubber
+            { 
+                get { return _matFlags != null && _matFlags.Contains("LockerMaterial_Rubber"); }
+                set { UpdateFlagValue("LockerMaterial_Rubber", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsMiniMapOnly
+            { 
+                get { return _matFlags != null && _matFlags.Contains("MiniMapOnly"); }
+                set { UpdateFlagValue("MiniMapOnly", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsCoopEnemyGround
+            { 
+                get { return _matFlags != null && _matFlags.Contains("CoopEnemyGround"); }
+                set { UpdateFlagValue("CoopEnemyGround", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsForceColPaintYPlus
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ForceColPaintYPlus"); }
+                set { UpdateFlagValue("ForceColPaintYPlus", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsForceColPaintPaintable
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ForceColPaintPaintable"); }
+                set { UpdateFlagValue("ForceColPaintPaintable", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsForceColPaintNotPaintable
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ForceColPaintNotPaintable"); }
+                set { UpdateFlagValue("ForceColPaintNotPaintable", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsForceColPaintIndependent
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ForceColPaintIndependent"); }
+                set { UpdateFlagValue("ForceColPaintIndependent", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsForceColPaintUnite
+            { 
+                get { return _matFlags != null && _matFlags.Contains("ForceColPaintUnite"); }
+                set { UpdateFlagValue("ForceColPaintUnite", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIgnoredByNavMesh
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoredByNavMesh"); }
+                set { UpdateFlagValue("IgnoredByNavMesh", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsBakeNavMeshExtraData
+            { 
+                get { return _matFlags != null && _matFlags.Contains("BakeNavMeshExtraData"); }
+                set { UpdateFlagValue("BakeNavMeshExtraData", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIgnoredByMiniMap
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoredByMiniMap"); }
+                set { UpdateFlagValue("IgnoredByMiniMap", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIgnoreAlongGround
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoreAlongGround"); }
+                set { UpdateFlagValue("IgnoreAlongGround", value); }
+            }
+
+            [Category("MatFlag Properties")]
+            public bool IsIgnoreByCoopFloatEnemy
+            { 
+                get { return _matFlags != null && _matFlags.Contains("IgnoreByCoopFloatEnemy"); }
+                set { UpdateFlagValue("IgnoreByCoopFloatEnemy", value); }
+            }
+            
+            //coldisable stuff
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsNoHit
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("NoHit"); }
+                set { UpdateColFlagValue("NoHit", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsCustomReceiver
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("CustomReceiver"); }
+                set { UpdateColFlagValue("CustomReceiver", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsGameCustomReceiver
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("GameCustomReceiver"); }
+                set { UpdateColFlagValue("GameCustomReceiver", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsGroundCol
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Ground"); }
+                set { UpdateColFlagValue("Ground", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsWaterCol
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Water"); }
+                set { UpdateColFlagValue("Water", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayer
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayer"); }
+                set { UpdateColFlagValue("SplPlayer", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerChariotShieldCol
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerChariotShield"); }
+                set { UpdateColFlagValue("SplPlayerChariotShield", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplCamera
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplCamera"); }
+                set { UpdateColFlagValue("SplCamera", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSakeSaucer
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSakeSaucer"); }
+                set { UpdateColFlagValue("SplSakeSaucer", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplInkBullet_FriendThrough
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplInkBullet_FriendThrough"); }
+                set { UpdateColFlagValue("SplInkBullet_FriendThrough", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSubstanceBullet
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSubstanceBullet"); }
+                set { UpdateColFlagValue("SplSubstanceBullet", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSubstanceBullet_HitOpposite
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSubstanceBullet_HitOpposite"); }
+                set { UpdateColFlagValue("SplSubstanceBullet_HitOpposite", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplVehicleSpectacle
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplVehicleSpectacle"); }
+                set { UpdateColFlagValue("SplVehicleSpectacle", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSubstanceBullet_HitBullet
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSubstanceBullet_HitBullet"); }
+                set { UpdateColFlagValue("SplSubstanceBullet_HitBullet", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSubstanceBullet_Lite
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSubstanceBullet_Lite"); }
+                set { UpdateColFlagValue("SplSubstanceBullet_Lite", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplRollerBody
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplRollerBody"); }
+                set { UpdateColFlagValue("SplRollerBody", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplStationedWeapon
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplStationedWeapon"); }
+                set { UpdateColFlagValue("SplStationedWeapon", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplInkShield
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplInkShield"); }
+                set { UpdateColFlagValue("SplInkShield", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplUltraStamp
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplUltraStamp"); }
+                set { UpdateColFlagValue("SplUltraStamp", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSakelienBomberBody
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSakelienBomberBody"); }
+                set { UpdateColFlagValue("SplSakelienBomberBody", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplBlowerInhale
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplBlowerInhale"); }
+                set { UpdateColFlagValue("SplBlowerInhale", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplBluntWeapon
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplBluntWeapon"); }
+                set { UpdateColFlagValue("SplBluntWeapon", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplInkFilm
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplInkFilm"); }
+                set { UpdateColFlagValue("SplInkFilm", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplInkTornado
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplInkTornado"); }
+                set { UpdateColFlagValue("SplInkTornado", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplGreatBarrier
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplGreatBarrier"); }
+                set { UpdateColFlagValue("SplGreatBarrier", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSaberBombGuard
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSaberBombGuard"); }
+                set { UpdateColFlagValue("SplSaberBombGuard", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPaintSplash
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPaintSplash"); }
+                set { UpdateColFlagValue("SplPaintSplash", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplObject
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplObject"); }
+                set { UpdateColFlagValue("SplObject", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsMissionEnemy
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("MissionEnemy"); }
+                set { UpdateColFlagValue("MissionEnemy", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplCoopEnemy
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplCoopEnemy"); }
+                set { UpdateColFlagValue("SplCoopEnemy", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSdodrEnemy
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSdodrEnemy"); }
+                set { UpdateColFlagValue("SplSdodrEnemy", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplItem
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplItem"); }
+                set { UpdateColFlagValue("SplItem", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplWallaObj
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplWallaObj"); }
+                set { UpdateColFlagValue("SplWallaObj", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsUnspecified
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Unspecified"); }
+                set { UpdateColFlagValue("Unspecified", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsGround
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Ground"); }
+                set { UpdateColFlagValue("Ground", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsGroundObject
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("GroundObject"); }
+                set { UpdateColFlagValue("GroundObject", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerHuman
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerHuman"); }
+                set { UpdateColFlagValue("SplPlayerHuman", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerSquid_Visible
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerSquid_Visible"); }
+                set { UpdateColFlagValue("SplPlayerSquid_Visible", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerSquid_Invisible
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerSquid_Invisible"); }
+                set { UpdateColFlagValue("SplPlayerSquid_Invisible", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerSquid_NoThroughFence
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerSquid_NoThroughFence"); }
+                set { UpdateColFlagValue("SplPlayerSquid_NoThroughFence", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerChariot
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerChariot"); }
+                set { UpdateColFlagValue("SplPlayerChariot", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerChariotShield
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerChariotShield"); }
+                set { UpdateColFlagValue("SplPlayerChariotShield", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplPlayerSuperHookCheck
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplPlayerSuperHookCheck"); }
+                set { UpdateColFlagValue("SplPlayerSuperHookCheck", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplSalmonBuddy
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplSalmonBuddy"); }
+                set { UpdateColFlagValue("SplSalmonBuddy", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSight
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Sight"); }
+                set { UpdateColFlagValue("Sight", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsEnemy
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Enemy"); }
+                set { UpdateColFlagValue("Enemy", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsEnemyLarge
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("EnemyLarge"); }
+                set { UpdateColFlagValue("EnemyLarge", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsMissionEnemyHide
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("MissionEnemyHide"); }
+                set { UpdateColFlagValue("MissionEnemyHide", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsEnemyHide
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("EnemyHide"); }
+                set { UpdateColFlagValue("EnemyHide", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsNPC
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("NPC"); }
+                set { UpdateColFlagValue("NPC", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsShield
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("Shield"); }
+                set { UpdateColFlagValue("Shield", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsHalfBrokenShield
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("HalfBrokenShield"); }
+                set { UpdateColFlagValue("HalfBrokenShield", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsForceField
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("ForceField"); }
+                set { UpdateColFlagValue("ForceField", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSubstanceBullet_Solid
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SubstanceBullet_Solid"); }
+                set { UpdateColFlagValue("SubstanceBullet_Solid", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSubstanceBullet_Fragile
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SubstanceBullet_Fragile"); }
+                set { UpdateColFlagValue("SubstanceBullet_Fragile", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsPlayerCustomPartStandAlone
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("PlayerCustomPartStandAlone"); }
+                set { UpdateColFlagValue("PlayerCustomPartStandAlone", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplEnergyStand
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplEnergyStand"); }
+                set { UpdateColFlagValue("SplEnergyStand", value); }
+            }
+
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplInkBullet
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplInkBullet"); }
+                set { UpdateColFlagValue("SplInkBullet", value); }
+            }
+            
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplBall
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplBall"); }
+                set { UpdateColFlagValue("SplBall", value); }
+            }
+
+            [Category("ColDisableFlag Properties")]
+            public bool IsSplOverheadBullet
+            { 
+                get { return _ColDisableFlag != null && _ColDisableFlag.Contains("SplOverheadBullet"); }
+                set { UpdateColFlagValue("SplOverheadBullet", value); }
+            }
+
+
 
             public Material()
             {
@@ -351,5 +1230,9 @@ namespace FlexColParser
             }
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
