@@ -294,7 +294,6 @@ namespace FlexColParser
         {
             
             private List<string> _matFlags;
-            private List<string> _ColDisableFlag;
             
             [Category("General")]
             [TypeConverter(typeof(Form1.MaterialNameConverter))]
@@ -320,22 +319,12 @@ namespace FlexColParser
             [Category("Advanced")]
             [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
                     "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-            public List<string> ColDisableFlag 
-            {
-                get { return _ColDisableFlag; }
-                set
-                {
-                    _ColDisableFlag = value;
-                    //placeholder
-                    DeathZones = _ColDisableFlag != null && _ColDisableFlag.Contains("PlayerDead");
-                }
-            }
+            public List<string> ColDisableFlag { get; set; }
             
             [Category("General")]
             [DisplayName("Death Zones")]
             [Browsable(true)]
-            public bool DeathZones
-            {
+            public bool DeathZones{
                 get { return _matFlags != null && _matFlags.Contains("PlayerDead"); }
                 set
                 {
