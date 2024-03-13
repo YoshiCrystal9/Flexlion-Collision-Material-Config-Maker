@@ -36,11 +36,14 @@ namespace FlexColParser
 
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(new[] { "Undefined", "Character", "Water", "InkWater", "Ice"
-                    , "Dirt", "Soil", "Wasteland", "Grass", "Cloth", "Carpet", "Rubber", "Vinyl", "Plastic"
-                    , "Glass", "Wood", "Stone", "Asphalt", "Sand", "Metal", "IronSand", "Fence", "RopeNet", "Snow"
-                    , "CoralSand", "KebaInk", "BlowerInhale", "Ink", "Barrier", "Shield", "ThrowingWeapon", "ExPaint"
-                    , "LockerObj", "PlayerMammal", "Torpedo", "CoopFloat", "Ball", "BallEx", "BallGoal"});
+                return new StandardValuesCollection(new[]
+                {
+                    "Undefined", "Character", "Water", "InkWater", "Ice", "Dirt", "Soil", "Wasteland", "Grass", "Cloth",
+                    "Carpet", "Rubber", "Vinyl", "Plastic", "Glass", "Wood", "Stone", "Asphalt", "Sand", "Metal",
+                    "IronSand", "Fence", "RopeNet", "Snow", "CoralSand", "KebaInk", "BlowerInhale", "Ink", "Barrier",
+                    "Shield", "ThrowingWeapon", "ExPaint", "LockerObj", "PlayerMammal", "Torpedo", "CoopFloat", "Ball",
+                    "BallEx", "BallGoal"
+                });
             }
         }
 
@@ -58,7 +61,7 @@ namespace FlexColParser
 
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(new[] { null,"Fence", "Water" });
+                return new StandardValuesCollection(new[] { null, "Fence", "Water" });
             }
         }
 
@@ -82,8 +85,11 @@ namespace FlexColParser
             // nombres de materiales del ListBox y los agregamos al JSON
             foreach (MaterialInfo materialInfo in materialsList)
             {
-                materials.Add(materialInfo.OriginalName, CreateMaterial(materialInfo.Material.MatName, materialInfo.Material.MatFlags, materialInfo.Material.FxPreset, materialInfo.Material.ColDisableFlag));
+                materials.Add(materialInfo.OriginalName,
+                    CreateMaterial(materialInfo.Material.MatName, materialInfo.Material.MatFlags,
+                        materialInfo.Material.FxPreset, materialInfo.Material.ColDisableFlag));
             }
+
             string userText = textBoxObjectName.Text;
             string userText2 = textBox69.Text;
 
@@ -117,7 +123,8 @@ namespace FlexColParser
             }
         }
 
-        private JObject CreateMaterial(string matName, List<string> matFlags = null, string fxPreset = null, List<string> colDisableFlag = null)
+        private JObject CreateMaterial(string matName, List<string> matFlags = null, string fxPreset = null,
+            List<string> colDisableFlag = null)
         {
             JObject material = new JObject();
             if (matName != null)
@@ -149,7 +156,8 @@ namespace FlexColParser
                 foreach (string materialName in materialNames)
                 {
                     listBox1.Items.Add(materialName);
-                    materialsList.Add(new MaterialInfo { OriginalName = materialName, Material = new Material { MatName = "Asphalt" } });
+                    materialsList.Add(new MaterialInfo
+                        { OriginalName = materialName, Material = new Material { MatName = "Asphalt" } });
                 }
             }
         }
@@ -179,11 +187,13 @@ namespace FlexColParser
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Couldn't read the .obj file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Couldn't read the .obj file: " + ex.Message, "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
 
             return materialNames;
         }
+
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
@@ -207,62 +217,87 @@ namespace FlexColParser
         private void openbutton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
-            openFileDialog.Title = "Select a JSON file";
+    openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+    openFileDialog.Title = "Select a JSON file";
 
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+    if (openFileDialog.ShowDialog() == DialogResult.OK)
+    {
+        string jsonFilePath = openFileDialog.FileName;
+        string jsonContent = File.ReadAllText(jsonFilePath);
+
+        // Parsear el JSON
+        JObject jsonObject = JObject.Parse(jsonContent);
+
+        // Limpiar la lista y el control ListBox
+        materialsList.Clear();
+        listBox1.Items.Clear();
+
+        // Obtener los datos del property grid
+        JObject collision = (JObject)jsonObject["collision"];
+        JObject collisionData = collision?.Properties().FirstOrDefault()?.Value as JObject;
+        string objPath = collisionData?["obj_path"]?.ToString();
+
+        JObject materials = collisionData?["materials"] as JObject;
+        if (materials != null)
+        {
+            foreach (KeyValuePair<string, JToken> materialData in materials)
             {
-                string jsonFilePath = openFileDialog.FileName;
-                string jsonContent = File.ReadAllText(jsonFilePath);
-                
-                JObject jsonObject = JObject.Parse(jsonContent);
-
-                JObject collision = (JObject)jsonObject["collision"];
-                JObject collisionData = collision?.Properties().FirstOrDefault()?.Value as JObject;
-                string objPath = collisionData?["obj_path"]?.ToString();
-
-                JObject materials = collisionData?["materials"] as JObject;
-                if (materials != null)
-                {
-                    foreach (KeyValuePair<string, JToken> materialData in materials)
-                    {
-                        string originalName = materialData.Key;
-                        JObject materialInfo = materialData.Value as JObject;
-                        string matName = materialInfo?["mat_name"]?.ToString();
-                        string fxPreset = materialInfo?["fx_preset"]?.ToString();
-
-                        // Actualizar la lista de materiales y el listBox
-                        materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset } });
-                        listBox1.Items.Add(originalName);
-                    }
-                }
-                textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
+                string originalName = materialData.Key;
+                JObject materialInfo = materialData.Value as JObject;
+                string matName = materialInfo?["mat_name"]?.ToString();
+                string fxPreset = materialInfo?["fx_preset"]?.ToString();
+                // Agregar los nuevos elementos a la lista y al listBox
+                materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset } });
+                listBox1.Items.Add(originalName);
             }
         }
 
-    }
-
-    
-    //me quiero matar
-    public class Material
-    {
-        [TypeConverter(typeof(Form1.MaterialNameConverter))]
-        public string MatName { get; set; }
-        [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
-                "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-        public List<string> MatFlags { get; set; }
-
-        [TypeConverter(typeof(Form1.FxPresetConverter))]
-        public string FxPreset { get; set; }
-        [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
-                "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
-        public List<string> ColDisableFlag { get; set; }
-
-        public Material()
+        // Obtener la información de "map_patches" y actualizar el TextBox y CheckBox
+        JObject mapPatches = jsonObject["map_patches"] as JObject;
+        if (mapPatches != null)
         {
-            MatFlags = new List<string>();
-            ColDisableFlag = new List<string>();
+            // Obtener el primer elemento de "map_patches"
+            var firstPatch = mapPatches.Properties().FirstOrDefault();
+            if (firstPatch != null)
+            {
+                string patchName = firstPatch.Name;
+                textBox69.Text = patchName;
+
+                // Obtener el valor de "extend_col_heap" dentro del primer elemento de "map_patches"
+                bool extendColHeap = firstPatch.Value["extend_col_heap"]?.ToObject<bool>() ?? false;
+                checkBoxExtendColHeap.Checked = extendColHeap;
+            }
+        }
+
+        // Actualizar los controles adicionales según sea necesario
+        textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
+        // También puedes actualizar otros controles aquí si es necesario
+    }
+        }
+
+
+        //me quiero matar
+        public class Material
+        {
+            [TypeConverter(typeof(Form1.MaterialNameConverter))]
+            public string MatName { get; set; }
+
+            [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
+                    "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
+            public List<string> MatFlags { get; set; }
+
+            [TypeConverter(typeof(Form1.FxPresetConverter))]
+            public string FxPreset { get; set; }
+
+            [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
+                    "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
+            public List<string> ColDisableFlag { get; set; }
+
+            public Material()
+            {
+                MatFlags = new List<string>();
+                ColDisableFlag = new List<string>();
+            }
         }
     }
-    
 }
