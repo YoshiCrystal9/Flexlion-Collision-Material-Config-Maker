@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 //llevo sin programar tiempo no me toqueis as bolas aoprfajorovr
@@ -183,7 +184,6 @@ namespace FlexColParser
 
             return materialNames;
         }
-
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
@@ -203,7 +203,46 @@ namespace FlexColParser
         {
             throw new System.NotImplementedException();
         }
+
+        private void openbutton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+            openFileDialog.Title = "Select a JSON file";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string jsonFilePath = openFileDialog.FileName;
+                string jsonContent = File.ReadAllText(jsonFilePath);
+                
+                JObject jsonObject = JObject.Parse(jsonContent);
+
+                JObject collision = (JObject)jsonObject["collision"];
+                JObject collisionData = collision?.Properties().FirstOrDefault()?.Value as JObject;
+                string objPath = collisionData?["obj_path"]?.ToString();
+
+                JObject materials = collisionData?["materials"] as JObject;
+                if (materials != null)
+                {
+                    foreach (KeyValuePair<string, JToken> materialData in materials)
+                    {
+                        string originalName = materialData.Key;
+                        JObject materialInfo = materialData.Value as JObject;
+                        string matName = materialInfo?["mat_name"]?.ToString();
+                        string fxPreset = materialInfo?["fx_preset"]?.ToString();
+
+                        // Actualizar la lista de materiales y el listBox
+                        materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset } });
+                        listBox1.Items.Add(originalName);
+                    }
+                }
+                textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
+            }
+        }
+
     }
+
+    
     //me quiero matar
     public class Material
     {
@@ -224,6 +263,6 @@ namespace FlexColParser
             MatFlags = new List<string>();
             ColDisableFlag = new List<string>();
         }
-
     }
+    
 }

@@ -31,8 +31,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.hiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mecagoendios = new System.Windows.Forms.ToolStripButton();
             this.openJSONToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -43,35 +41,19 @@
             this.textBox69 = new System.Windows.Forms.TextBox();
             this.textBoxObjectName = new System.Windows.Forms.TextBox();
             this.listBox2 = new System.Windows.Forms.ListBox();
+            this.openbutton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.toolStripDropDownButton1, this.mecagoendios });
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openbutton, this.mecagoendios });
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // toolStripDropDownButton1
-            // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.hiToolStripMenuItem });
-            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(38, 22);
-            this.toolStripDropDownButton1.Text = "File";
-            this.toolStripDropDownButton1.ToolTipText = "FileSelect";
-            // 
-            // hiToolStripMenuItem
-            // 
-            this.hiToolStripMenuItem.Name = "hiToolStripMenuItem";
-            this.hiToolStripMenuItem.Size = new System.Drawing.Size(84, 22);
-            this.hiToolStripMenuItem.Text = "hi";
             // 
             // mecagoendios
             // 
@@ -159,6 +141,17 @@
             this.listBox2.Size = new System.Drawing.Size(120, 95);
             this.listBox2.TabIndex = 10;
             // 
+            // openbutton
+            // 
+            this.openbutton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.openbutton.Image = ((System.Drawing.Image)(resources.GetObject("openbutton.Image")));
+            this.openbutton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.openbutton.Name = "openbutton";
+            this.openbutton.Size = new System.Drawing.Size(40, 22);
+            this.openbutton.Text = "Open";
+            this.openbutton.ToolTipText = "FileSelect";
+            this.openbutton.Click += new System.EventHandler(this.openbutton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -181,8 +174,6 @@
             this.PerformLayout();
         }
 
-        private System.Windows.Forms.ToolStripMenuItem hiToolStripMenuItem;
-
         private System.Windows.Forms.ToolStripButton toolStripButton1;
 
         private System.Windows.Forms.ListBox listBox2;
@@ -203,7 +194,7 @@
         private System.Windows.Forms.ToolStripMenuItem openJSONToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton mecagoendios;
 
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripButton openbutton;
 
         private System.Windows.Forms.ToolStrip toolStrip1;
 
