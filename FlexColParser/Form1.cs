@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms;
 
@@ -206,12 +207,14 @@ namespace FlexColParser
     {
         [TypeConverter(typeof(Form1.MaterialNameConverter))]
         public string MatName { get; set; }
-
+        [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
+                "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
         public List<string> MatFlags { get; set; }
 
         [TypeConverter(typeof(Form1.FxPresetConverter))]
         public string FxPreset { get; set; }
-
+        [Editor("System.Windows.Forms.Design.StringCollectionEditor, " + "System.Design, Version=2.0.0.0, " +
+                "Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
         public List<string> ColDisableFlag { get; set; }
 
         public Material()
