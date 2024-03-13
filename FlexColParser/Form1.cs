@@ -246,7 +246,13 @@ namespace FlexColParser
                         JObject materialInfo = materialData.Value as JObject;
                         string matName = materialInfo?["mat_name"]?.ToString();
                         string fxPreset = materialInfo?["fx_preset"]?.ToString();
-                        materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset } });
+                        
+                        // Obtener el contenido de mat_flags y col_disable_flag
+                        List<string> matFlags = materialInfo?["mat_flags"]?.ToObject<List<string>>() ?? new List<string>();
+                        List<string> colDisableFlag = materialInfo?["col_disable_flag"]?.ToObject<List<string>>() ?? new List<string>();
+
+                        // Agregar los nuevos elementos a la lista y al listBox
+                        materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset, MatFlags = matFlags, ColDisableFlag = colDisableFlag } });
                         listBox1.Items.Add(originalName);
                     }
                 }
@@ -269,7 +275,6 @@ namespace FlexColParser
                 textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
             }
         }
-
 
         //me quiero matar
         public class Material
