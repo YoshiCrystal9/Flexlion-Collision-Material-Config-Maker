@@ -6,6 +6,8 @@ using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms;
 
+//llevo sin programar tiempo no me toqueis as bolas aoprfajorovr
+
 namespace FlexColParser
 {
     public partial class Form1 : Form
@@ -65,18 +67,18 @@ namespace FlexColParser
             materialsList = new List<MaterialInfo>();
         }
 
-        private void createJSONToolStripMenuItem_Click(object sender, EventArgs e)
+        private void mecagoendios_Click(object sender, EventArgs e)
         {
             JObject jsonObject = new JObject();
 
-            // Crear la sección de colisión
+            // sección de colisión
             JObject collision = new JObject();
             JObject collisionData = new JObject();
             collisionData.Add("obj_path", "/" + objFileName);
 
             JObject materials = new JObject();
 
-            // Aquí obtenemos los nombres de materiales del ListBox y los agregamos al JSON
+            // nombres de materiales del ListBox y los agregamos al JSON
             foreach (MaterialInfo materialInfo in materialsList)
             {
                 materials.Add(materialInfo.OriginalName, CreateMaterial(materialInfo.Material.MatName, materialInfo.Material.MatFlags, materialInfo.Material.FxPreset, materialInfo.Material.ColDisableFlag));
@@ -100,17 +102,17 @@ namespace FlexColParser
             // Guardar JSON en archivo
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "JSON Files (*.json)|*.json";
-            saveFileDialog.Title = "Guardar archivo JSON";
-            saveFileDialog.FileName = "output.json"; // Nombre de archivo predeterminado
+            saveFileDialog.Title = "Save JSON";
+            saveFileDialog.FileName = "config.json"; // Nombre de archivo predeterminado
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllText(saveFileDialog.FileName, jsonOutput);
-                MessageBox.Show("JSON creado y guardado exitosamente.");
+                MessageBox.Show("Created JSON and saved.");
             }
             else
             {
-                MessageBox.Show("Operación de creación y guardado de JSON cancelada.");
+                MessageBox.Show("cancel what!!!??.");
             }
         }
 
@@ -119,11 +121,11 @@ namespace FlexColParser
             JObject material = new JObject();
             if (matName != null)
                 material.Add("mat_name", matName);
-            if (matFlags != null && matFlags.Count > 0) // Agregar mat_flags solo si hay elementos en la lista
+            if (matFlags != null && matFlags.Count > 0) // coño ya
                 material.Add("mat_flags", JToken.FromObject(matFlags));
             if (fxPreset != null)
                 material.Add("fx_preset", fxPreset);
-            if (colDisableFlag != null && colDisableFlag.Count > 0) // Agregar col_disable_flag solo si hay elementos en la lista
+            if (colDisableFlag != null && colDisableFlag.Count > 0) // saojijsa08gjsr
                 material.Add("col_disable_flag", JToken.FromObject(colDisableFlag));
 
             return material;
@@ -146,7 +148,7 @@ namespace FlexColParser
                 foreach (string materialName in materialNames)
                 {
                     listBox1.Items.Add(materialName);
-                    materialsList.Add(new MaterialInfo { OriginalName = materialName, Material = new Material { MatName = materialName } });
+                    materialsList.Add(new MaterialInfo { OriginalName = materialName, Material = new Material { MatName = "Asphalt" } });
                 }
             }
         }
@@ -176,7 +178,7 @@ namespace FlexColParser
             }
             catch (Exception ex)
             {
-                MessageBox.Show("No se pudo leer el archivo .obj: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Couldn't read the .obj file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return materialNames;
@@ -202,7 +204,7 @@ namespace FlexColParser
             throw new System.NotImplementedException();
         }
     }
-
+    //me quiero matar
     public class Material
     {
         [TypeConverter(typeof(Form1.MaterialNameConverter))]
