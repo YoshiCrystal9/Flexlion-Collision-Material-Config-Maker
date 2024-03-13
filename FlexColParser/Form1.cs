@@ -217,62 +217,57 @@ namespace FlexColParser
         private void openbutton_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-    openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
-    openFileDialog.Title = "Select a JSON file";
+            openFileDialog.Filter = "JSON Files (*.json)|*.json|All Files (*.*)|*.*";
+            openFileDialog.Title = "Select a JSON file";
 
-    if (openFileDialog.ShowDialog() == DialogResult.OK)
-    {
-        string jsonFilePath = openFileDialog.FileName;
-        string jsonContent = File.ReadAllText(jsonFilePath);
-
-        // Parsear el JSON
-        JObject jsonObject = JObject.Parse(jsonContent);
-
-        // Limpiar la lista y el control ListBox
-        materialsList.Clear();
-        listBox1.Items.Clear();
-
-        // Obtener los datos del property grid
-        JObject collision = (JObject)jsonObject["collision"];
-        JObject collisionData = collision?.Properties().FirstOrDefault()?.Value as JObject;
-        string objPath = collisionData?["obj_path"]?.ToString();
-
-        JObject materials = collisionData?["materials"] as JObject;
-        if (materials != null)
-        {
-            foreach (KeyValuePair<string, JToken> materialData in materials)
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string originalName = materialData.Key;
-                JObject materialInfo = materialData.Value as JObject;
-                string matName = materialInfo?["mat_name"]?.ToString();
-                string fxPreset = materialInfo?["fx_preset"]?.ToString();
-                // Agregar los nuevos elementos a la lista y al listBox
-                materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset } });
-                listBox1.Items.Add(originalName);
+                string jsonFilePath = openFileDialog.FileName;
+                string jsonContent = File.ReadAllText(jsonFilePath);
+
+                // Parsear el JSON
+                JObject jsonObject = JObject.Parse(jsonContent);
+
+                // Limpiar la lista y el control ListBox
+                materialsList.Clear();
+                listBox1.Items.Clear();
+
+                // Obtener los datos del property grid
+                JObject collision = (JObject)jsonObject["collision"];
+                JObject collisionData = collision?.Properties().FirstOrDefault()?.Value as JObject;
+                string objPath = collisionData?["obj_path"]?.ToString();
+
+                JObject materials = collisionData?["materials"] as JObject;
+                if (materials != null)
+                {
+                    foreach (KeyValuePair<string, JToken> materialData in materials)
+                    {
+                        string originalName = materialData.Key;
+                        JObject materialInfo = materialData.Value as JObject;
+                        string matName = materialInfo?["mat_name"]?.ToString();
+                        string fxPreset = materialInfo?["fx_preset"]?.ToString();
+                        materialsList.Add(new MaterialInfo { OriginalName = originalName, Material = new Material { MatName = matName, FxPreset = fxPreset } });
+                        listBox1.Items.Add(originalName);
+                    }
+                }
+
+                // Obtener la información de "map_patches" y actualizar el TextBox y CheckBox
+                JObject mapPatches = jsonObject["map_patches"] as JObject;
+                if (mapPatches != null)
+                {
+                    var firstPatch = mapPatches.Properties().FirstOrDefault();
+                    if (firstPatch != null)
+                    {
+                        string patchName = firstPatch.Name;
+                        textBox69.Text = patchName;
+
+                        // Obtener el valor de "extend_col_heap" dentro del primer elemento de "map_patches"
+                        bool extendColHeap = firstPatch.Value["extend_col_heap"]?.ToObject<bool>() ?? false;
+                        checkBoxExtendColHeap.Checked = extendColHeap;
+                    }
+                }
+                textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
             }
-        }
-
-        // Obtener la información de "map_patches" y actualizar el TextBox y CheckBox
-        JObject mapPatches = jsonObject["map_patches"] as JObject;
-        if (mapPatches != null)
-        {
-            // Obtener el primer elemento de "map_patches"
-            var firstPatch = mapPatches.Properties().FirstOrDefault();
-            if (firstPatch != null)
-            {
-                string patchName = firstPatch.Name;
-                textBox69.Text = patchName;
-
-                // Obtener el valor de "extend_col_heap" dentro del primer elemento de "map_patches"
-                bool extendColHeap = firstPatch.Value["extend_col_heap"]?.ToObject<bool>() ?? false;
-                checkBoxExtendColHeap.Checked = extendColHeap;
-            }
-        }
-
-        // Actualizar los controles adicionales según sea necesario
-        textBoxObjectName.Text = Path.GetFileNameWithoutExtension(objPath);
-        // También puedes actualizar otros controles aquí si es necesario
-    }
         }
 
 
