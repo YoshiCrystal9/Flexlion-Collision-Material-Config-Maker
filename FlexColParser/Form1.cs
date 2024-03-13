@@ -87,7 +87,7 @@ namespace FlexColParser
             string userText2 = textBox69.Text;
 
             collisionData.Add("materials", materials);
-            collision.Add($"/Phive/Shape/Dcc/{userText}.Nin_NX_NVN.bphsh", collisionData);
+            collision.Add($"Phive/Shape/Dcc/{userText}.Nin_NX_NVN.bphsh", collisionData);
             jsonObject.Add("collision", collision);
 
             // Crear la sección de parches de mapa
