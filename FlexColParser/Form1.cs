@@ -130,7 +130,7 @@ namespace FlexColParser
             if (matName != null)
                 material.Add("mat_name", matName);
             if (matFlags != null && matFlags.Count > 0) // coño ya
-                material.Add("mat_flagss", JToken.FromObject(matFlags));
+                material.Add("mat_flags", JToken.FromObject(matFlags));
             if (fxPreset != null)
                 material.Add("fx_preset", fxPreset);
             if (colDisableFlag != null && colDisableFlag.Count > 0) // saojijsa08gjsr
@@ -247,9 +247,9 @@ namespace FlexColParser
                         string matName = materialInfo?["mat_name"]?.ToString();
                         string fxPreset = materialInfo?["fx_preset"]?.ToString();
 
-                        // Obtener el contenido de mat_flagss y col_disable_flag
+                        // Obtener el contenido de mat_flags y col_disable_flag
                         List<string> matFlags =
-                            materialInfo?["mat_flagss"]?.ToObject<List<string>>() ?? new List<string>();
+                            materialInfo?["mat_flags"]?.ToObject<List<string>>() ?? new List<string>();
                         List<string> colDisableFlag = materialInfo?["col_disable_flag"]?.ToObject<List<string>>() ??
                                                       new List<string>();
 
